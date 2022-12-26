@@ -11,6 +11,8 @@ import com.example.demo.model.CustomerResponse;
 import com.example.demo.repository.AccountsRepo;
 import com.example.demo.repository.CustomerRepo;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 public class AccountsService {
 	
@@ -22,8 +24,18 @@ public class AccountsService {
 	
 	public AccountResponse getAccounts(AccountRequest accreq) 
 	{
+		
 		AccountResponse accresp = new AccountResponse();
-		AccountsEntity accent  = accrep.findById(accreq.getAccountNumber()).get();
+		AccountsEntity accent = new AccountsEntity();
+		try 
+		{
+		   accent  = accrep.findById(accreq.getAccountNumber()).get();
+
+			
+		} catch (Exception e) {
+		  
+			accrep.findById(accreq.getAccountNumber()).orElseThrow();
+		}
 		
 		BeanUtils.copyProperties(accent, accresp);
 		
@@ -34,10 +46,12 @@ public class AccountsService {
 	{
 		
 		CustomerResponse custresp = new CustomerResponse();
-		AccountsEntity accent  = accrep.findById(accreq.getAccountNumber()).get();
-		//AccountResponse resp = new AccountResponse();
+		AccountsEntity accent = accrep.findById(accreq.getAccountNumber()).get(); 
 		int custid = accent.getCustomerNum();
+
 		CustomerEntity custent = custrepo.findById(custid).get();
+
+		
 		BeanUtils.copyProperties(custent, custresp);
 		return custresp;
 	}
